@@ -10,6 +10,10 @@
 \usepackage{float}
 \usepackage{tikz}
 
+
+\usetikzlibrary{graphs}
+\usetikzlibrary{graphs.standard}
+
 \usepackage[hmargin=3cm,vmargin=3.5cm]{geometry}
 
 \newtheorem{lemma}{Lemma}
@@ -35,6 +39,176 @@
 
 \begin{document}
 \begin{center}
+\begin{tikzpicture}[every node/.style={draw,circle,thick,fill=black,inner sep=2pt}]
+\def\size{4}
+\pgfmathparse{(2*\size)+1}
+\xdef\hori{\pgfmathresult}
+\pgfmathparse{\size + 1}
+\xdef\vertical{\pgfmathresult}
 
+%graph
+
+%vertices
+\foreach \x in {1,...,\hori}
+	\foreach \y in {1,...,\vertical}
+	\node (\x\y) at (\x,\y) {};
+	
+%edges
+%horizontal
+\pgfmathparse{\hori-1}
+\xdef\horiz{\pgfmathresult}
+\foreach \x in {1,...,\horiz}
+	\foreach \y in {1,...,\vertical}
+	{\pgfmathsetmacro{\next}{int(\x + 1)}
+	\draw (\x\y) -- (\next\y);}
+
+%vertical
+\pgfmathparse{\vertical-1}
+\foreach \x in {1,3,...,\hori}
+\foreach \y in {1,...,\pgfmathresult}
+	{\pgfmathsetmacro{\next}{int(\y + 1)}
+	\draw (\x\y) -- (\x\next);}
+	
+%cuts
+
+%horizontal
+\pgfmathparse{\hori+0.5}
+\xdef\cutwidth{\pgfmathresult}
+\foreach \x in {1,...,\size}
+	\foreach \y in {1,...,\size}
+		\draw [red,thick]  (\x-0.5,\y+0.5) -- (\cutwidth,\y+0.5);
+		
+%vertical
+\end{tikzpicture}
 \end{center}
+
+\vspace{10mm}
+
+\begin{center}
+\begin{tikzpicture}[every node/.style={draw,circle,thick,fill=black,inner sep=2pt}]
+\def\size{2}
+\pgfmathparse{int(4*\size+1)}
+\xdef\horizontal{\pgfmathresult}
+\pgfmathparse{int(4*\size + 1)}
+\xdef\vertical{\pgfmathresult}
+\pgfmathparse{\horizontal-1}
+\xdef\hori{\pgfmathresult}
+\pgfmathparse{\vertical-1}
+\xdef\vert{\pgfmathresult}
+
+%graph
+
+%vertices
+\foreach \x in {1,...,\horizontal}
+	\foreach \y in {1,...,\vertical}
+	\node (\x a\y) at (\x,\y) {};
+	
+%edges
+%fixed edges
+\foreach \x in {1,...,\hori}
+	\foreach \y in {1,3,...,\vertical}
+	{\pgfmathsetmacro{\next}{int(\x+1)}
+	\draw (\x a\y)--(\next a\y);}
+
+\foreach \y in {1,...,\vert}
+	\foreach \x in {1,3,...,\horizontal}
+	{\pgfmathsetmacro{\next}{int(\y+1)}
+	\draw (\x a\y)--(\x a\next);}
+	
+%horizontal edges
+\foreach \x in {1,5,...,\hori}
+	\foreach \y in {1,...,\vertical}{
+	\pgfmathparse{Mod(\y,4)==0?1:0}
+	\ifnum\pgfmathresult>0{
+		\pgfmathsetmacro{\next}{int(\x+2)}
+		\draw (\x a\y) -- (\next a\y);}
+	\else {}
+	\fi}
+
+\foreach \x in {3,7,...,\hori}
+	\foreach \y in {1,...,\vertical}{
+	\pgfmathparse{Mod(\y,4)==2?1:0}
+	\ifnum\pgfmathresult>0{
+		\pgfmathsetmacro{\next}{int(\x+2)}
+		\draw (\x a\y) -- (\next a\y);}
+	\else {}
+	\fi}
+	
+%vertical edges
+\foreach \y in {1,5,...,\vert}
+	\foreach \x in {1,...,\horizontal}{
+	\pgfmathparse{Mod(\x,4)==2?1:0}
+	\ifnum\pgfmathresult>0{
+		\pgfmathsetmacro{\next}{int(\y+2)}
+		\draw (\x a\y) -- (\x a\next);}
+	\else {}
+	\fi}
+	
+\foreach \y in {3,7,...,\vert}
+	\foreach \x in {1,...,\horizontal}{
+	\pgfmathparse{Mod(\x,4)==0?1:0}
+	\ifnum\pgfmathresult>0{
+		\pgfmathsetmacro{\next}{int(\y+2)}
+		\draw(\x a\y) -- (\x a\next);}
+	\else {}
+	\fi}
+\end{tikzpicture}
+\end{center}
+
+\newpage
+\begin{center}
+\begin{tikzpicture}[every node/.style={draw,circle,thick,fill=black,inner sep=2pt}]
+\def\size{5}
+\xdef\horizontal{3}
+\pgfmathparse{\size + 1}
+\xdef\vertical{\pgfmathresult}
+
+%vertices
+\xdef\k{\size}
+\foreach \y in {\size,...,1}{
+	\foreach \x in {1,...,\horizontal}{
+		\pgfmathsetmacro{\pos}{\x+\k}
+		\node (\x a\y) at (\pos,\y) {};}
+	\pgfmathparse{\horizontal+2}
+	\xdef\horizontal{\pgfmathresult}
+	\pgfmathparse{\k-1}
+	\xdef\k{\pgfmathresult}
+}
+
+\pgfmathparse{\horizontal-2}
+\xdef\horizontal{\pgfmathresult}
+\foreach \x in {1,...,\horizontal} {
+	\pgfmathsetmacro{\pos}{\x + 1}
+	\node (\x a0) at (\pos,0) {};}
+
+
+%edges
+%horizontal
+\xdef\horizontal{3}
+\foreach \y in {\size,...,1}{
+	\draw (1a\y)--(\horizontal a\y);
+	\pgfmathparse{int(\horizontal+2)}
+	\xdef\horizontal{\pgfmathresult}
+}
+\pgfmathparse{int(\horizontal - 2)}
+\xdef\horizontal{\pgfmathresult}
+\draw (1a0) -- (\horizontal a0);
+
+%vertical
+\xdef\horizontal{3}
+\foreach \y in {\size,...,2}{
+	\pgfmathparse{int(2)}
+	\xdef\k{\pgfmathresult}
+	\foreach \x in {1,...,\horizontal} {
+		\pgfmathsetmacro{\next}{\y-1}
+		\draw (\x a\y)--(\k a\next);
+		\pgfmathparse{int(\k+1)}
+		\xdef\k{\pgfmathresult}
+	}
+	\pgfmathparse{int(\horizontal+2)}
+	\xdef\horizontal{\pgfmathresult}
+}
+\end{tikzpicture}
+\end{center}
+
 \end{document}
