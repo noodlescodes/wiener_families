@@ -10,6 +10,7 @@
 \usepackage{float}
 \usepackage{tikz}
 
+\usepackage{tilings}
 
 \usetikzlibrary{graphs}
 \usetikzlibrary{graphs.standard}
@@ -38,6 +39,12 @@
 
 
 \begin{document}
+
+The tiling of the plane by six cycles, as in the following image.
+
+
+
+%square tiling
 \begin{center}
 \begin{tikzpicture}[every node/.style={draw,circle,thick,fill=black,inner sep=2pt}]
 \def\size{4}
@@ -84,6 +91,10 @@
 
 \vspace{10mm}
 
+To calculate the Wiener index, we need to consider three different cut families, the horizontal cuts, and two families of vertical cuts, which are identical, so only one of them needs to be considered, and then in the the final calculation, counted twice.
+
+The following image is a different tiling of the plane with six cycles, often called a parquetry tiling.
+%parquetry
 \begin{center}
 \begin{tikzpicture}[every node/.style={draw,circle,thick,fill=black,inner sep=2pt}]
 \def\size{2}
@@ -155,10 +166,15 @@
 \end{tikzpicture}
 \end{center}
 
+There is only one family of cuts that need to be considered for the parquetry tiling due to it having rotation symmetry. In the final calculation we simply multiple the number obtained from this single family by four to get the Wiener index.
+
 \newpage
+
+The top half of an aztec diamond, picture below.
+%half aztec diamond
 \begin{center}
 \begin{tikzpicture}[every node/.style={draw,circle,thick,fill=black,inner sep=2pt}]
-\def\size{5}
+\def\size{3}
 \xdef\horizontal{3}
 \pgfmathparse{\size + 1}
 \xdef\vertical{\pgfmathresult}
@@ -167,18 +183,18 @@
 \xdef\k{\size}
 \foreach \y in {\size,...,1}{
 	\foreach \x in {1,...,\horizontal}{
-		\pgfmathsetmacro{\pos}{\x+\k}
+		\pgfmathsetmacro{\pos}{int(\x+\k)}
 		\node (\x a\y) at (\pos,\y) {};}
-	\pgfmathparse{\horizontal+2}
+	\pgfmathparse{int(\horizontal+2)}
 	\xdef\horizontal{\pgfmathresult}
-	\pgfmathparse{\k-1}
+	\pgfmathparse{int(\k-1)}
 	\xdef\k{\pgfmathresult}
 }
 
-\pgfmathparse{\horizontal-2}
+\pgfmathparse{int(\horizontal-2)}
 \xdef\horizontal{\pgfmathresult}
 \foreach \x in {1,...,\horizontal} {
-	\pgfmathsetmacro{\pos}{\x + 1}
+	\pgfmathsetmacro{\pos}{int(\x + 1)}
 	\node (\x a0) at (\pos,0) {};}
 
 
@@ -195,20 +211,122 @@
 \draw (1a0) -- (\horizontal a0);
 
 %vertical
-\xdef\horizontal{3}
-\foreach \y in {\size,...,2}{
-	\pgfmathparse{int(2)}
-	\xdef\k{\pgfmathresult}
-	\foreach \x in {1,...,\horizontal} {
-		\pgfmathsetmacro{\next}{\y-1}
-		\draw (\x a\y)--(\k a\next);
-		\pgfmathparse{int(\k+1)}
-		\xdef\k{\pgfmathresult}
-	}
+\xdef\horizontal{5}
+\pgfmathparse{int(\size - 1)}
+\xdef\s{\pgfmathresult}
+\foreach \y in {\s,...,2} {
+	\xdef\k{2}
+	\foreach \x in {1,3,...,\horizontal} {
+		\pgfmathsetmacro{\next}{int(\y-1)}
+		\draw (\x a\y) -- (\k a\next);
+		\pgfmathparse{int(\k+2)}
+		\xdef\k{\pgfmathresult}}
 	\pgfmathparse{int(\horizontal+2)}
 	\xdef\horizontal{\pgfmathresult}
 }
+\foreach \x in {1,3}{
+	\pgfmathsetmacro{\next}{int(\size-1)}
+	\pgfmathsetmacro{\xr}{int(\x+1)}
+	\draw (\x a\size) -- (\xr a\next);
+}
+\pgfmathparse{2*\size+1}
+\xdef\horizontal{\pgfmathresult}
+\foreach \x in {1,3,...,\horizontal}
+	\draw (\x a1) -- (\x a0);
 \end{tikzpicture}
 \end{center}
 
+There are three cut families to consider with this graph. It is not obvious from this diagram, but all three families are the same, so again, we only need to calculate the value for one family, and multiple by three.
+
+\vspace{10mm}
+
+The Aztec diamond, picture below.
+%Aztec diamond
+\begin{center}
+\begin{tikzpicture}[every node/.style={draw,circle,thick,fill=black,inner sep=2pt}]
+\def\size{3}
+\xdef\horizontal{3}
+\pgfmathparse{2*\size+1}
+\xdef\vertical{\pgfmathresult}
+
+%vertices
+\xdef\k{\size}
+\foreach \y in {\size,...,1}{
+	\foreach \x in {1,...,\horizontal} {
+		\pgfmathsetmacro{\pos}{int(\x+\k)}
+		\node (\x a\y) at (\pos,\y) {};}
+	\pgfmathparse{int(\horizontal+2)}
+	\xdef\horizontal{\pgfmathresult}
+	\pgfmathparse{int(\k-1)}
+	\xdef\k{\pgfmathresult}
+}
+
+\pgfmathparse{int(\horizontal-2)}
+\xdef\horizontal{\pgfmathresult}
+\foreach \x in {1,...,\horizontal} {
+	\pgfmathsetmacro{\pos}{int(\x + 1)}
+	\node (\x a0) at (\pos,0) {};
+}
+
+\xdef\k{1}
+\foreach \y in {-1,...,-\size}{
+	\foreach \x in {1,...,\horizontal} {
+		\pgfmathsetmacro{\pos}{int(\x+\k)}
+		\node (\x a\y) at (\pos,\y) {};}
+	\pgfmathparse{int(\horizontal-2)}
+	\xdef\horizontal{\pgfmathresult}
+	\pgfmathparse{int(\k+1)}
+	\xdef\k{\pgfmathresult}
+}
+
+%edges
+%horizontal
+\xdef\horizontal{3}
+\foreach \y in {\size,...,1}{
+	\draw (1a\y)--(\horizontal a\y);
+	\pgfmathparse{int(\horizontal+2)}
+	\xdef\horizontal{\pgfmathresult}
+}
+\pgfmathparse{int(\horizontal -2)}
+\xdef\horizontal{\pgfmathresult}
+\draw (1a0) -- (\horizontal a0);
+\foreach \y in {-1,...,-\size} {
+	\draw (1a\y)--(\horizontal a\y);
+	\pgfmathparse{int(\horizontal-2)}
+	\xdef\horizontal{\pgfmathresult}
+}
+
+%vertical
+\xdef\horizontal{5}
+\pgfmathparse{int(\size-1)}
+\xdef\s{\pgfmathresult}
+\foreach \y in {\s,...,2} {
+	\xdef\k{2}
+	\foreach \x in {1,3,...,\horizontal} {
+		\pgfmathsetmacro{\next}{int(\y-1)}
+		\draw (\x a\y) -- (\k a\next);
+		\draw (\x a-\y) -- (\k a-\next);
+		\pgfmathparse{int(\k+2)}
+		\xdef\k{\pgfmathresult}}
+	\pgfmathparse{int(\horizontal+2)}
+	\xdef\horizontal{\pgfmathresult}
+}
+
+\foreach \x in {1,3}{
+	\pgfmathsetmacro{\next}{int(\size-1)}
+	\pgfmathsetmacro{\xr}{int(\x+1)}
+	\draw (\x a\size) -- (\xr a\next);
+	\draw (\x a-\size) -- (\xr a-\next);
+}
+\pgfmathparse{2*\size+1}
+\xdef\horizontal{\pgfmathresult}
+\foreach \x in {1,3,...,\horizontal}{
+	\draw (\x a1) -- (\x a0);
+	\draw (\x a-1) -- (\x a0);
+}
+
+\end{tikzpicture}
+\end{center}
+
+The Aztec diamond has three families, the horizontal family, and two vertical families, which once again are symmetric, so only need to be calculated once, and counted twice in the evaluation of the Wiener index.
 \end{document}
